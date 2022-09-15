@@ -5,7 +5,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-from pages.model import load_model
+from pages.model import load_model, load_scaler
 from pages.utils import surface_to_pred
 
 number = st.number_input('Please enter your height in cm')
@@ -139,7 +139,14 @@ pred_df.loc[0,'opp_2ndWon'] = second_won
 pred_df.loc[0,'opp_bpSaved'] = breaks_save
 pred_df.loc[0,'opp_bpFaced'] = breaks_faced
 
-pred_df
+#SCALING
+scaler = load_scaler('scaler.pickle')
+X_test = pred_df.to_numpy()
+X_test_scaled = scaler.transform(X_test)
+#Prediction
+pred = model.predict_proba(X_test)
+
+st.text(f"Chance of beating Novak is {pred[0][1]*100} %")
 
 #TO DO LIST:
 #Turn DF into np array
@@ -149,4 +156,3 @@ pred_df
 
 #nice to have functionised code where possible (i.e. the if elses)
 #also make look pretty
-
